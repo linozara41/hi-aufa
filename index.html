@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 19th Birthday, Aufa! ✨</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FEFAF6',
+                        dustypink: '#E2C2C6',
+                        rosegold: '#B76E79',
+                        softtext: '#5A4A42'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Poppins"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Variables & Global Settings */
+        body {
+            background-color: #FEFAF6;
+            color: #5A4A42;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Floating Particles Background */
+        #particles-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(226, 194, 198, 0.4);
+            border-radius: 50%;
+            animation: floatUp 10s infinite linear;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Envelope Animation */
+        .envelope-container {
+            perspective: 1000px;
+            width: 320px;
+            height: 220px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .envelope-body {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: #E2C2C6;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(183, 110, 121, 0.15);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .envelope-flap {
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid #D9B3B8;
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+        }
+        .envelope-container.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        .envelope-front {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 160px solid #E2C2C6;
+            border-right: 160px solid #E2C2C6;
+            border-bottom: 110px solid #E8CAD0;
+            z-index: 2;
+        }
+        
+        /* Modal Letter */
+        #letter-modal {
+            backdrop-filter: blur(5px);
+            transition: opacity 0.5s ease;
+        }
+
+        /* Flip Cards (Interactive Cat Gallery) */
+        .flip-card {
+            background-color: transparent;
+            aspect-ratio: 3/4;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%; height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner, .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(183, 110, 121, 0.12);
+            overflow: hidden;
+            background: white;
+            padding: 12px;
+            border: 2px solid #F3E8E8;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: #FFF9FA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 2px solid #E2C2C6;
+        }
+        .polaroid-img {
+            width: 100%; height: 80%;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        /* Floating Cat Emoji Effect */
+        .cat-emoji-float {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: floatAndFade 1.5s ease-out forwards;
+            font-size: 2rem;
+        }
+        @keyframes floatAndFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5) translateY(0); }
+            50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.3) translateY(-40px); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1) translateY(-80px); }
+        }
+
+        /* Candle Flame Animation */
+        .flame {
+            animation: flicker 0.5s infinite alternate;
+            transform-origin: bottom;
+        }
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
+            100% { transform: scale(1.1) rotate(1deg); opacity: 1; }
+        }
+        .candle-extinguished .flame {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased relative">
+
+    <!-- Background Particles -->
+    <div id="particles-container"></div>
+
+    <!-- SECTION 1: HERO -->
+    <section class="min-h-screen flex flex-col items-center justify-center text-center p-6 relative z-10">
+        <div class="fade-in space-y-6 max-w-4xl mx-auto">
+            <span class="px-4 py-2 rounded-full border border-dustypink/50 text-rosegold text-sm font-medium tracking-widest uppercase bg-white/50 backdrop-blur-sm">
+                A Special Day
+            </span>
+            <h1 class="font-serif text-5xl md:text-7xl font-semibold text-rosegold mt-6 leading-tight">
+                Happy 19th Birthday, <br/>
+                <span class="italic">Aufa! ✨</span>
+            </h1>
+            <p class="text-lg md:text-xl text-softtext font-light tracking-wide max-w-lg mx-auto mt-4">
+                Welcome to your 19th year, Auk! May your new chapter be filled with beautiful colors.
+            </p>
+
+            <!-- DIRECT SPOTIFY LINK SECTION -->
+            <a href="https://open.spotify.com/search/Mac%20DeMarco%20No%20Other%20Heart" target="_blank" rel="noopener noreferrer" class="w-full max-w-md bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-md border border-dustypink/30 flex items-center justify-between gap-4 mx-auto mt-8 hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-1 group">
+                <div class="flex items-center gap-4 text-left">
+                    <div class="bg-[#1DB954] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md group-hover:scale-105 transition-all shrink-0">
+                        <i class="fa-brands fa-spotify text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-serif font-semibold text-rosegold text-base">Mac DeMarco — No Other Heart</h2>
+                        <p class="text-xs text-softtext/70">Dengerin lagunya di Spotify ✨</p>
+                    </div>
+                </div>
+                <i class="fas fa-external-link-alt text-rosegold/60 group-hover:text-rosegold text-sm mr-2 transition-colors"></i>
+            </a>
+
+            <div class="mt-8 animate-bounce text-dustypink">
+                <i class="fas fa-chevron-down text-2xl opacity-70"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: LOVE LETTER -->
+    <section class="py-24 px-6 relative z-10 bg-white/30 backdrop-blur-sm">
+        <div class="max-w-3xl mx-auto text-center space-y-12">
+            <h2 class="font-serif text-3xl md:text-4xl text-rosegold font-medium">A Special Letter for Aufa 💌</h2>
+            <p class="text-sm text-softtext/70 mb-8">Tap this envelope to open your message</p>
+            
+            <!-- Envelope Design -->
+            <div class="envelope-container group" id="envelope">
+                <div class="envelope-body">
+                    <span class="font-serif text-white font-medium italic text-xl z-20">For Auk...</span>
+                </div>
+                <div class="envelope-front"></div>
+                <div class="envelope-flap"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Letter Modal Overlay -->
+    <div id="letter-modal" class="fixed inset-0 bg-cream/90 z-50 hidden opacity-0 flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full p-6 md:p-10 rounded-2xl shadow-2xl relative border border-dustypink/30 transform scale-95 transition-transform duration-500 max-h-[85vh] overflow-y-auto" id="letter-content-box">
+            <button id="close-letter" class="absolute top-4 right-4 text-dustypink hover:text-rosegold transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="font-serif text-base md:text-lg text-softtext leading-relaxed text-left" id="typewriter-text">
+                <!-- Text will be typed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: INTERACTIVE CAT GALLERY -->
+    <section class="py-24 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto space-y-12">
+            <div class="text-center space-y-3">
+                <span class="text-xs font-semibold uppercase tracking-widest text-rosegold bg-dustypink/20 px-3 py-1 rounded-full">Special Anabul Squad 🐾</span>
+                <h2 class="font-serif text-3xl md:text-4xl text-rosegold font-medium">Pasukan Kucing Pengirim Doa 🐱✨</h2>
+                <p class="text-softtext font-light max-w-md mx-auto">
+                    Karena foto asli kita kurang, pasukan kucing lucu ini siap mewakili doa & kebahagiaan buat Auk! <i>(Klik kartu atau elus kucingnya ya!)</i>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0">
+                
+                <!-- Card 1: Kucing Pesta -->
+                <div class="flip-card cat-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white flex flex-col justify-between">
+                            <img src="https://media.giphy.com/media/CjmvTCZf2U3p09Cn0h/giphy.gif" alt="Kucing Pesta" class="polaroid-img">
+                            <div class="py-2">
+                                <span class="font-serif text-rosegold font-semibold text-lg block">Si Kucing Pesta 🥳</span>
+                                <span class="text-xs text-softtext/60">Tap untuk lihat doa!</span>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="text-3xl mb-2">🎉🐾</div>
+                            <h3 class="font-serif text-xl text-rosegold font-semibold mb-2">Happy 19th!</h3>
+                            <p class="font-sans text-sm text-softtext italic leading-relaxed">
+                                "Meowww! Semoga di umur 19 ini IPK Auk tinggi terus, makin pinter, dan hari-harinya manis kayak snack kucing paling mahal!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Kucing Roti / Santai -->
+                <div class="flip-card cat-card mt-0 md:mt-8">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white flex flex-col justify-between">
+                            <img src="https://media.giphy.com/media/Lq0h93752f6J9tijrh/giphy.gif" alt="Kucing Santai" class="polaroid-img">
+                            <div class="py-2">
+                                <span class="font-serif text-rosegold font-semibold text-lg block">Si Kucing Chill 🍞</span>
+                                <span class="text-xs text-softtext/60">Tap untuk lihat doa!</span>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="text-3xl mb-2">🌿💤</div>
+                            <h3 class="font-serif text-xl text-rosegold font-semibold mb-2">Keep Chill & Relax</h3>
+                            <p class="font-sans text-sm text-softtext italic leading-relaxed">
+                                "Kalau kuliah di IPB lagi capek atau pusing, inget buat istirahat ya Auk. Jangan lupa nap time biar tetep gemoy & semangat!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Kucing Penyemangat -->
+                <div class="flip-card cat-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front bg-white flex flex-col justify-between">
+                            <img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" alt="Kucing Penyemangat" class="polaroid-img">
+                            <div class="py-2">
+                                <span class="font-serif text-rosegold font-semibold text-lg block">Si Kucing Penyemangat 💖</span>
+                                <span class="text-xs text-softtext/60">Tap untuk lihat doa!</span>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="text-3xl mb-2">😻✨</div>
+                            <h3 class="font-serif text-xl text-rosegold font-semibold mb-2">You are Cool!</h3>
+                            <p class="font-sans text-sm text-softtext italic leading-relaxed">"Auk tuh keren banget tau! Selalu surrounded by good energy ya. Arzel & kucing-kucing ini bakal selalu nyemangatin Auk!"</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Interactive Pet Button -->
+            <div class="text-center pt-6">
+                <button id="pet-cat-btn" class="bg-white border-2 border-dustypink text-rosegold px-6 py-3 rounded-full font-medium text-sm hover:bg-dustypink hover:text-white transition-all shadow-md active:scale-95 inline-flex items-center gap-2">
+                    <i class="fas fa-paw"></i> Elus Kucingnya di Sini! 🐾
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: MAKE A WISH -->
+    <section class="py-24 px-6 relative z-10 bg-white/40 backdrop-blur-sm border-t border-dustypink/20 text-center rounded-t-3xl shadow-[0_-10px_40px_rgba(226,194,198,0.2)] mt-12">
+        <h2 class="font-serif text-3xl md:text-4xl text-rosegold font-medium mb-12">Make a Wish, Auk! 🎂</h2>
+        
+        <div class="flex flex-col items-center justify-center" id="cake-container">
+            <!-- Minimalist Cake SVG -->
+            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-8">
+                <!-- Cake Base -->
+                <rect x="50" y="120" width="100" height="60" rx="10" fill="#E2C2C6"/>
+                <path d="M40 135C40 135 70 150 100 150C130 150 160 135 160 135" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+                
+                <!-- Candle 1 (Number 1) -->
+                <rect x="80" y="70" width="10" height="50" rx="2" fill="#fff"/>
+                <path d="M80 80L70 90" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                <path d="M85 65C85 55 90 50 85 40C80 50 85 55 85 65Z" fill="#FBBF24" class="flame"/>
+                
+                <!-- Candle 2 (Number 9) -->
+                <rect x="110" y="70" width="10" height="50" rx="2" fill="#fff"/>
+                <circle cx="115" cy="85" r="10" stroke="#fff" stroke-width="4" fill="transparent"/>
+                <path d="M115 65C115 55 120 50 115 40C110 50 115 55 115 65Z" fill="#FBBF24" class="flame"/>
+            </svg>
+
+            <button id="wish-btn" class="bg-rosegold text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-dustypink hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                Blow Candles & Make a Wish ✨
+            </button>
+        </div>
+
+        <!-- Wish Popup -->
+        <div id="wish-popup" class="hidden mt-8 max-w-md mx-auto p-6 bg-white border border-dustypink rounded-2xl shadow-xl fade-in">
+            <h3 class="font-serif text-xl text-rosegold font-bold mb-2">The candles are out! 🌬️</h3>
+            <p class="text-softtext italic">"May all your hopes and dreams at 19 be fulfilled by the universe. Always stay happy, Auk! aamiinn."</p>
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // 1. Background Particles
+        const particlesContainer = document.getElementById('particles-container');
+        for (let i = 0; i < 20; i++) {
+            let particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            let size = Math.random() * 15 + 5;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDelay = `${Math.random() * 10}s`;
+            particle.style.animationDuration = `${Math.random() * 5 + 10}s`;
+            
+            particlesContainer.appendChild(particle);
+        }
+
+        // 2. Interactive Letter with Typewriter Effect
+        const envelope = document.getElementById('envelope');
+        const letterModal = document.getElementById('letter-modal');
+        const closeLetter = document.getElementById('close-letter');
+        const typeWriterText = document.getElementById('typewriter-text');
+        const letterContentBox = document.getElementById('letter-content-box');
+        
+        const message = `happyyy 19th birthday, aukkk!! finally 19 yaaa, cepet banget waktunya. rasanya baru kemarin masih sekolah, masih ketemu, masih ngobrolin hal-hal random, sekarang auk udah jadi anak ipb ajaa. anyway, arzel mau wish yang baik-baik buat auk di umur yang baru ini. semoga auk selalu sehat, kuliahnya lancar, semua urusan yang lagi dijalanin dimudahkan, dan apa pun yang lagi auk kejar sekarang bisa pelan-pelan tercapai. i hope 19 will be a good year for you, not necessarily perfect, but full of good things, good people, and good memories. semoga auk selalu punya alasan buat seneng, punya orang-orang yang bisa diajak cerita, dan tetap punya semangat buat jalanin semuanya. just enjoy the process, aukkk. nggak harus semuanya langsung figured out sekarang.<br><br>jujur ya auk, arzel really admire you. dari dulu sampai sekarang auk tuh selalu punya sesuatu yang bikin arzel mikir kalau auk is actually a really cool person. auk baik, positive, pinter, terus vibes-nya juga enak banget. dan sekarang ditambah lagi fakta bahwa aufa kuliah di ipb... that’s actually so cool. seriusss. dulu masih anak sekolah, sekarang udah punya kehidupan sendiri di ipb. arzel seneng banget bisa lihat perjalanan auk sampai sejauh ini, dari hal-hal kecil sampai hal-hal keren yang auk lakuin sekarang. arzel genuinely admire how auk keeps growing, keeps learning, and keeps doing things that make auk excited. banyak banget hal yang sudah auk lewatin sampai sekarang, and honestly, it’s really nice to see where all of that has brought auk.<br><br>terus ngomongin soal letter, arzel masih inget banget sama letter yang pernah auk kasih waktu masih sekolah dulu. isi letter-nya sweet banget dan sampai sekarang masih arzel inget. dan yang bikin makin berkesan, dua hari lalu auk literally kasih arzel letter lagi pas arzel ulang tahun. honestly, reading that letter meant a lot. cara auk nulis, kata-kata yang auk pilih, semuanya terasa so genuinely sweet. arzel mungkin nggak langsung bisa ngomong banyak waktu baca, tapi arzel really appreciate it, auk. jadi sekarang rasanya arzel pengen ngasih sedikit balik lewat tulisan ini. dari dulu pernah dapat letter manis dari auk waktu sekolah, terus dua hari lalu dapat lagi, and now arzel gets to write one for auk on her 19th birthday. that’s actually such a sweet little part of our story. life really moves fast yaaa.<br><br>and obviously, we have to mention the english thing wkwkwk. aufa tuh genuinely salah satu orang yang english-nya paling bagus yang arzel tau. kadang auk ngomong english tuh santai banget, sementara arzel masih mikir, “ini kalau arzel jawab begini kedengeran aneh nggak ya...” tapi yaa begitulah kehidupan. but seriously, arzel admire that about auk. bukan cuma karena auk jago english, tapi karena auk bisa make it feel so natural. bisa ngobrol, express things, switch between english and indo tanpa kelihatan mikir lama. that’s really cool. dan sebenarnya bukan cuma soal english, arzel juga admire banyak hal lain dari auk. cara auk belajar, cara auk berkembang, hal-hal yang auk berani coba, sampai semua hal keren yang auk udah lakuin sejauh ini. auk punya banyak hal yang menurut arzel keren, and arzel hope auk keeps giving herself the chance to explore even more things. masih banyak banget hal yang bisa auk coba, banyak tempat yang bisa auk datangi, dan banyak cerita yang belum auk punya. so keep going, aukkk. arzel really can’t wait to see what’s next for you.<br><br>anywayyy, happy 19th once again, aukkk. thank you yaa for being such a good friend, for all the random conversations, all the little memories, dan semua hal kecil yang akhirnya jadi bagian dari perjalanan sampai sekarang. arzel hope 19 treats auk well. semoga tahun ini ada banyak cerita seru, banyak kesempatan baru, banyak hal yang bikin auk makin berkembang, dan tentunya banyak hal yang bikin auk happy. keep being auk, keep being kind, keep that positive energy, and keep doing all the cool things auk loves. arzel will always be rooting for auk, wherever life takes auk.<br><br>and lastlyyy, enjoy your 19th, aukkk. enjoy your ipb era toooo. see u in kepala 2, aukkk xixixi. stay happy, stay kind, and take care always.<br><br>warmly,<br><strong>arzel</strong>`;
+
+        let typeIndex = 0;
+        let isTyping = false;
+
+        function typeWriter() {
+            if (typeIndex < message.length) {
+                if (message.charAt(typeIndex) === '<') {
+                    let tag = '';
+                    while (message.charAt(typeIndex) !== '>' && typeIndex < message.length) {
+                        tag += message.charAt(typeIndex);
+                        typeIndex++;
+                    }
+                    tag += '>';
+                    typeWriterText.innerHTML += tag;
+                    typeIndex++;
+                } else {
+                    typeWriterText.innerHTML += message.charAt(typeIndex);
+                    typeIndex++;
+                }
+                setTimeout(typeWriter, 12);
+            }
+        }
+
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('open');
+            setTimeout(() => {
+                letterModal.classList.remove('hidden');
+                void letterModal.offsetWidth;
+                letterModal.classList.remove('opacity-0');
+                letterContentBox.classList.remove('scale-95');
+                letterContentBox.classList.add('scale-100');
+                
+                if (!isTyping) {
+                    typeWriterText.innerHTML = '';
+                    typeIndex = 0;
+                    isTyping = true;
+                    setTimeout(typeWriter, 400);
+                }
+            }, 600);
+        });
+
+        closeLetter.addEventListener('click', () => {
+            letterModal.classList.add('opacity-0');
+            letterContentBox.classList.remove('scale-100');
+            letterContentBox.classList.add('scale-95');
+            setTimeout(() => {
+                letterModal.classList.add('hidden');
+                envelope.classList.remove('open');
+            }, 500);
+        });
+
+        // 3. Interactive Cat Feature (Floating Emoji Effect)
+        function createCatEmoji(x, y) {
+            const emojis = ['😸', '🐾', '🐱', '💖', '✨', '🎂', '😻'];
+            const emojiEl = document.createElement('div');
+            emojiEl.classList.add('cat-emoji-float');
+            emojiEl.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            emojiEl.style.left = `${x}px`;
+            emojiEl.style.top = `${y}px`;
+            document.body.appendChild(emojiEl);
+
+            setTimeout(() => {
+                emojiEl.remove();
+            }, 1500);
+        }
+
+        const petBtn = document.getElementById('pet-cat-btn');
+        petBtn.addEventListener('click', (e) => {
+            const rect = petBtn.getBoundingClientRect();
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const offsetX = (Math.random() - 0.5) * 120;
+                    const offsetY = (Math.random() - 0.5) * 40;
+                    createCatEmoji(rect.left + rect.width / 2 + offsetX, rect.top + offsetY);
+                }, i * 100);
+            }
+        });
+
+        document.querySelectorAll('.cat-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                card.classList.toggle('flipped');
+                createCatEmoji(e.clientX, e.clientY);
+            });
+        });
+
+        // 4. Make a Wish & Confetti
+        const wishBtn = document.getElementById('wish-btn');
+        const cakeContainer = document.getElementById('cake-container');
+        const wishPopup = document.getElementById('wish-popup');
+        let wishMade = false;
+
+        wishBtn.addEventListener('click', () => {
+            if (wishMade) return;
+            wishMade = true;
+
+            cakeContainer.classList.add('candle-extinguished');
+            
+            wishBtn.innerHTML = 'Wish Sent! 💖';
+            wishBtn.classList.remove('bg-rosegold');
+            wishBtn.classList.add('bg-gray-300', 'cursor-default');
+
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100, colors: ['#E2C2C6', '#B76E79', '#FEFAF6', '#FBBF24'] };
+
+            function randomInRange(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+
+            setTimeout(() => {
+                wishPopup.classList.remove('hidden');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
